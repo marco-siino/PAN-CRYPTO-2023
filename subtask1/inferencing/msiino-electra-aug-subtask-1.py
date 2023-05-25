@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import random
 import json
-#from simpletransformers.classification import ClassificationModel, ClassificationArgs
+from simpletransformers.classification import ClassificationModel, ClassificationArgs
 
 random.seed(0)
 
@@ -31,25 +31,30 @@ def load_file(input_directory: Path):
     df_to_predict = pd.DataFrame(list(zip(user_id, user_text)), columns =['twitter user id', 'text'])
     return df_to_predict 
 
-def run_random_baseline(df_to_predict, output_file):
+def run_electra(df_to_predict, output_file):
     user_id=[]
     user_probs=[]
     user_label=[]  
+    LABELS=['macro', 'mega', 'micro', 'nano', 'no influencer']
+    model = ClassificationModel("electra", "outputs")
     for user, user_texts in df_to_predict.groupby("twitter user id"):
         print (user_texts.columns)
         # Next 4 lines are McRock code.
         for i, text in enumerate(user_texts['text']):
             print(i)
             print(text)
-            #electra.prediction
-            #user_values = [electra.predict(text)]
-        user_values = [random.choice(LABELS) for i, text in enumerate(user_texts['text'])]
+            
+            #user_values = [LABELS[np.array(prediction).argmax()]]
+        prediction = model.predict([text])[1]    
+        user_values = LABELS[np.array(prediction).argmax()]
+        #user_values = [random.choice(LABELS) for i, text in enumerate(user_texts['text'])]
         
         #McRock code ->
         print(user_values)
         print(max(user_values))
         #McRock code -> print(user_texts)
-        user_label.append(max(user_values))
+        #user_label.append(max(user_values))
+        user_label.append(user_values)
         user_probs.append(1.0)
         user_id.append(user)    
     df_output = pd.DataFrame(list(zip(user_id, user_label, user_probs)), columns =['twitter user id', 'class', 'probability'])
@@ -65,7 +70,7 @@ def main():
     args = parser.parse_args()
     
     df_to_predict = load_file(Path(args.input))   
-    run_random_baseline(df_to_predict, args.output)
+    run_electra(df_to_predict, args.output)
 
 
 if __name__ == '__main__':
