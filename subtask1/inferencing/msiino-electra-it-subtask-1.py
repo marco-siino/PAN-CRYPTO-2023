@@ -36,7 +36,7 @@ def run_electra(df_to_predict, output_file):
     user_probs=[]
     user_label=[]  
     LABELS=['macro', 'mega', 'micro', 'nano', 'no influencer']
-    model = ClassificationModel("electra", "outputs",use_cuda=False)
+    model = ClassificationModel("electra", "outputs_electra_it",use_cuda=False)
     for user, user_texts in df_to_predict.groupby("twitter user id"):
         print (user_texts.columns)
         # Next 4 lines are McRock code.
