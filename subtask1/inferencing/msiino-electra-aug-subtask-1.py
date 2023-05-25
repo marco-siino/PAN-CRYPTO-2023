@@ -45,7 +45,7 @@ def run_electra(df_to_predict, output_file):
             print(text)
             
             #user_values = [LABELS[np.array(prediction).argmax()]]
-        prediction = model.predict([text])[1]    
+        prediction = model.predict(str([text]))[1]    
         user_values = LABELS[np.array(prediction).argmax()]
         #user_values = [random.choice(LABELS) for i, text in enumerate(user_texts['text'])]
         
